@@ -5,13 +5,13 @@
 #include <stack>
 #include <conio.h>
 using namespace std;
-
-void gotoxy(int x, int y)// установить курсор 
+//Hello
+void gotoxy(int x, int y)// установка курсора в нужную позицию на консоли 
 {
 	COORD p = { x, y };
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), p);
 }
-enum ConsoleColor
+enum ConsoleColor 
 {
 	BLACK = 0,
 	BLUE = 1,
@@ -30,11 +30,12 @@ enum ConsoleColor
 	YELLOW = 14,
 	WHITE = 15
 };
-void setColor(int background, int text)
+void setColor(int background, int text) // для цвета текста 
 {
 	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdOut, (WORD)((background << 4) | text));
 }
+	
 const int BORDER = 100; // граница поля 	
 const int EMPTY_CELL = 0; // пустая ячейка 
 const int MINE = 10; // мина
@@ -42,8 +43,8 @@ const int MINE = 10; // мина
 class Map // игровое поле
 {
 private:
-	vector <vector<int>> map;
-	vector <vector<int>> mask;
+	vector <vector<int>> map; // который скрыт от пользователя
+	vector <vector<int>> mask;// который показан для пользователя
 public:
 	int count;
 	int countmine;
@@ -57,7 +58,7 @@ public:
 			mask[i].resize(size, 0);
 		}
 	}
-	int openCell(int x, int y)
+	int openCell(int x, int y) // открывает клетки 
 	{
 		int result = 1;
 		mask[x][y] = 1;
@@ -72,7 +73,7 @@ public:
 		show();
 		return result;
 	}
-	bool isBorder(int x, int y)
+	bool isBorder(int x, int y) // проверка на границу
 	{
 		if (x < 0 || x >= size)
 			return false;
@@ -84,7 +85,7 @@ public:
 		}
 		return false;
 	}
-	void initVec(vector <vector<int>>& vec)
+	void initVec(vector <vector<int>>& vec)// установка границ поля
 	{
 		for (int i = 0; i < size; i++)
 		{
@@ -117,7 +118,7 @@ public:
 		cout << ch;
 		setColor(WHITE, BLACK);
 	}
-	void fill(int px, int py)
+	void fill(int px, int py)// рекурсивно открывает все пустые клетки 
 	{
 		stack <int> stk;
 		stk.push(px);
@@ -183,7 +184,7 @@ public:
 			}
 		}
 	}
-	void show()
+	void show() // выводит игровое поле на консоль 
 	{
 		gotoxy(0, 0);
 		count = 0;
@@ -245,11 +246,9 @@ public:
 			cout << endl;
 		}
 	}
-	// случайная расстановка мин
-	void setRandMines(int numMines)// растановка мин
+	void setRandMines(int numMines)// случайная расстановка мин
 	{
 		countmine = numMines;
-		// контроль количества мин которое можно установить на поле
 		if (numMines >= (size - 2) * (size - 2))
 		{
 			cout << "Too many mines" << endl;
@@ -262,13 +261,13 @@ public:
 			// поиск пустой ячейки, не занятой миной
 			do {
 				srand(time(0));
-				x = rand() % (size - 2) + 1;
+				x = rand() % (size - 2) + 1;	
 				y = rand() % (size - 2) + 1;
 			} while (map[x][y] == MINE);// MINE = 10
 			map[x][y] = MINE;
 		}
 	}
-	void setDigits()// расстановка чисел на игровом поле
+	void setDigits()// расстановка чисел на игровом поле(количество мин вокруг каждой клетки)
 	{
 		int d = 0;
 		for (int i = 1; i < size - 1; i++)
@@ -308,7 +307,7 @@ public:
 	{
 		ch = 0;
 	}
-	void waitKey()// ждем начало клавиши 
+	void waitKey()// ждем начало клавиши	
 
 	{
 		ch = _getch();
@@ -392,13 +391,13 @@ public:
 		gotoxy(0, 15);
 		system("pause");
 	}
-	void run()
+	void run() // запускает игру 
 	{
 		showLogo();
 		Map map;
 		map.initMap();
 		map.initMask();
-		map.setRandMines(9);
+		map.setRandMines(11);
 		map.setDigits();
 		map.show();
 		Keyboard kb;
@@ -433,7 +432,6 @@ public:
 					{
 						map.fill(cs.getX(), cs.getY());
 						map.show();
-						cout << (map.size-2) * (map.size -2) - map.countmine << "\n";
 					}
 				break;
 			}
